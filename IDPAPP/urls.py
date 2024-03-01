@@ -24,5 +24,5 @@ admin.site.index_title = "Welcome to IDP Researcher Portal"
 urlpatterns = [
     path('',views.index,name='index'),
     path('otp',views.verify_otp,name='index'),
-    path('about',views.about,name='index'),
+    path('verified',views.verified,name='index')
 ]
