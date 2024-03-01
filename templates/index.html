@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDP</title>
+</head>
+<body>
+    <form action="" method="post">
+        {% csrf_token %}
+        <label>Name</label>
+        <input type="text" name = 'name' placeholder="Name" />
+        <label>Application No</label>
+        <input type="text" name = 'roll' placeholder="APXXXXXXXXXXX">
+        <button type="submit">Submit</button>
+    </form>
+
+    <form action="/otp" method = "POST"> 
+        {% csrf_token %}
+        <label>Enter the OTP</label>
+        <input type="number" name = 'otp' placeholder="OTP">
+        <button type="submit">Verify</button>
+    </form>
+
+</body>
+</html>
