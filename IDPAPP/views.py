@@ -1,10 +1,11 @@
-import time
 from django.http import HttpResponse
 from django.shortcuts import render
 from IDPAPP.models import Student, Test
 import random
 from twilio.rest import Client
 from IDPAPP import Twiliodetails
+from django.utils import timezone
+import pytz
 
 def index(request):
     if request.method == 'POST':
@@ -45,37 +46,36 @@ def verify_otp(request):
             return HttpResponse("OTP expired. Please request a new OTP.")
         if otp_input == str(stored_otp):
             # OTP is verified, do something
+            roll_number = request.session.get('roll_number')
+            Name = request.session.get('Name')
+            validation = request.session.get('validation')
             validation = True
+            student = Student.objects.create(roll=roll_number, name=Name, validation=validation)
             request.session['validation'] = validation
-            return render(request, 'verified.html')
+            return render(request, 'OutGoing.html')
         else:
             return HttpResponse("Invalid OTP")
 
     return HttpResponse("Use the form to submit a POST request with the OTP.")
 
-def verified(request):
+def OutGoing(request):
     if request.session.get('validation'):
         roll_number = request.session.get('roll_number')
-        Name = request.session.get('Name')
-        validation = request.session.get('validation')
-        StudentOut = True
-        StudentIn = False
-        InTime = ""
-        OutTime = ""
-        if StudentOut:
-            InTime = time.strftime("%Y-%m-%d %H:%M:%S")
-        elif StudentIn:
-            OutTime = time.strftime("%Y-%m-%d %H:%M:%S")
-            InTime = 'Not yet entered to College.'
-        if StudentOut:
-            student = Student.objects.create(roll=roll_number, name=Name, validation=validation, StudentOut=StudentOut, StudentIn=StudentIn, OutTime=OutTime,InTime=InTime)
-            return render(request, 'verified.html')
-        elif StudentIn:
-            # Update the existing student record
+        try:
             student = Student.objects.get(roll=roll_number)
-            StudentIn = True
-            student.StudentIn = StudentIn
-            student.InTime = InTime
+            indian_timezone = pytz.timezone('Asia/Kolkata')
+            now = timezone.now().astimezone(indian_timezone)
+            if not student.StudentIn:
+                student.StudentIn = True
+                student.StudentOut = False
+                student.InTime = now.strftime("%d/%m/%Y %H:%M:%S")
+            else:
+                student.OutTime = now.strftime("%d/%m/%Y %H:%M:%S")
+                student.StudentOut = True
+                student.StudentIn = False
+                student.InTime = "Still out of campus"
             student.save()
-            return HttpResponse("Student not validated.")
+            return render(request, 'OutGoing.html')
+        except Student.DoesNotExist:
+            return HttpResponse("Student not found.")
     return HttpResponse("Student not validated.")
