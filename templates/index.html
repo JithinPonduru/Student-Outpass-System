@@ -1,26 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IDP</title>
-</head>
-<body>
-    <form action="" method="post">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+
+      header {
+        background-color: #333;
+        color: white;
+        text-align: center;
+        padding: 10px 0;
+      }
+
+      nav {
+        background-color: #444;
+        padding: 10px;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+        margin-right: 20px;
+      }
+
+      .container {
+        margin: 20px;
+        padding: 20px;
+        background-color: white;
+        border-radius: 5px;
+      }
+
+      form {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-sizing: border-box;
+      }
+
+      button {
+        padding: 5px 10px;
+        background-color: #333;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #555;
+      }
+
+      .log {
+        border: 1px solid #ccc;
+        padding: 10px;
+        max-height: 200px;
+        overflow-y: auto;
+        background-color: #f9f9f9;
+      }
+
+      /* Logo styles */
+      .logo {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 150px; /* Set the width of your logo */
+        height: auto;
+      }
+
+      /* Chrome, Safari, Edge, Opera */
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      /* Firefox */
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>IDP</h1>
+    </header>
+    <nav>
+      <a href="OutGoing">OutGoing</a>
+      <a href="InComing">InComing</a>
+    </nav>
+    <div class="container">
+      <!-- Add your college logo image here -->
+      <img
+        src="https://student.srmap.edu.in/srmapstudentcorner/resources/images/srmaplogo.png"
+        alt="College Logo"
+        class="logo"
+      />
+
+      <form action="" method="post">
         {% csrf_token %}
         <label>Name</label>
-        <input type="text" name = 'name' placeholder="Name" />
+        <input type="text" name="name" placeholder="Name" />
         <label>Application No</label>
-        <input type="text" name = 'roll' placeholder="APXXXXXXXXXXX">
+        <input type="text" name="roll" placeholder="APXXXXXXXXXXX" />
         <button type="submit">Submit</button>
-    </form>
+      </form>
 
-    <form action="/otp" method = "POST"> 
+      <form action="/otp" method="POST">
         {% csrf_token %}
         <label>Enter the OTP</label>
-        <input type="number" name = 'otp' placeholder="OTP">
+        <input type="number" name="otp" placeholder="OTP" />
         <button type="submit">Verify</button>
-    </form>
-
-</body>
+      </form>
+    </div>
+  </body>
 </html>

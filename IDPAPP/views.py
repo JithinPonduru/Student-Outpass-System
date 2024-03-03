@@ -75,7 +75,8 @@ def OutGoing(request):
                 student.StudentIn = False
                 student.InTime = "Still out of campus"
             student.save()
-            return render(request, 'OutGoing.html')
+            return render(request, 'OutGoing.html', {'roll_number': roll_number})
         except Student.DoesNotExist:
             return HttpResponse("Student not found.")
     return HttpResponse("Student not validated.")
+
