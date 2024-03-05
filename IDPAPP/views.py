@@ -1,3 +1,4 @@
+# ssh -R 80:localhost:8000 serveo.net
 from django.http import HttpResponse
 from django.shortcuts import render
 from IDPAPP.models import Student, Test
@@ -6,7 +7,9 @@ from twilio.rest import Client
 from IDPAPP import Twiliodetails
 from django.utils import timezone
 import pytz
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 def index(request):
     if request.method == 'POST':
         Name = request.POST.get('name')
@@ -38,6 +41,8 @@ def index(request):
 
     return render(request, 'index.html')
 
+
+@csrf_exempt
 def verify_otp(request):
     if request.method == 'POST':
         otp_input = request.POST.get('otp')
@@ -50,7 +55,11 @@ def verify_otp(request):
             Name = request.session.get('Name')
             validation = request.session.get('validation')
             validation = True
-            student = Student.objects.create(roll=roll_number, name=Name, validation=validation)
+            
+            try:
+                student = Student.objects.get(roll=roll_number)
+            except Student.DoesNotExist:
+                student = Student.objects.create(roll=roll_number, name=Name, validation=validation)
             request.session['validation'] = validation
             return render(request, 'OutGoing.html')
         else:

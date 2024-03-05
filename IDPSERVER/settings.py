@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-$mi@eazlytf@v%wm6rtx6x(5ur#c=w@gujx&_d=89)5^d&(1@#
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['713766cf8f7fc9dfba41886f57fcf2fe.serveo.net','de75-115-247-40-254.ngrok-free.app','127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
