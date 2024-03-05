@@ -23,14 +23,14 @@ def index(request):
             request.session['roll_number'] = roll_number
             request.session.set_expiry(300)  # Set expiry time for the session to 5 minutes
             # Send OTP via Twilio
-            # account_sid = Twiliodetails.account_sid
-            # auth_token = Twiliodetails.auth_token
-            # client = Client(account_sid, auth_token)
-            # message = client.messages.create(
-            #     body=f'Hi, this is your OTP: {otp}. Valid for 5 minutes.',
-            #     from_='+18587790079',
-            #     to='+91' + str(phone_number)
-            # )
+            account_sid = Twiliodetails.account_sid
+            auth_token = Twiliodetails.auth_token
+            client = Client(account_sid, auth_token)
+            message = client.messages.create(
+                body=f'Hi, this is your OTP: {otp}. Valid for 5 minutes.',
+                from_='+18587790079',
+                to='+91' + str(phone_number)
+            )
 
             return render(request, 'index.html')
         except Test.DoesNotExist:

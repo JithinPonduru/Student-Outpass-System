@@ -22,10 +22,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-$mi@eazlytf@v%wm6rtx6x(5ur#c=w@gujx&_d=89)5^d&(1@#'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# SECURITY WARNING: don't run with debug turned on in production!  fb12b2e0c388ce.lhr.life
+
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['713766cf8f7fc9dfba41886f57fcf2fe.serveo.net','de75-115-247-40-254.ngrok-free.app','127.0.0.1']
 
 
 # Application definition
