@@ -7,13 +7,18 @@ from twilio.rest import Client
 from IDPAPP import Twiliodetails
 from django.utils import timezone
 import pytz
+import json
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def index(request):
     if request.method == 'POST':
-        Name = request.POST.get('name')
-        roll_number = request.POST.get('roll')
+        received_data = json.loads(request.body)
+        Name = received_data.get('name')
+        roll_number = received_data.get('roll')
+        print(Name)
+        print(roll_number)
         try:
             student = Test.objects.get(roll=roll_number)
             phone_number = student.phone
