@@ -1,6 +1,5 @@
-# ssh -R 80:localhost:8000 serveo.net
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from IDPAPP.models import Student, Test
 import random
 from twilio.rest import Client
@@ -14,9 +13,13 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def index(request):
     if request.method == 'POST':
-        received_data = json.loads(request.body)
-        Name = received_data.get('name')
-        roll_number = received_data.get('roll')
+        try:
+            received_data = json.loads(request.body)
+            Name = received_data.get('name')
+            roll_number = received_data.get('roll')
+        except json.JSONDecodeError:
+            Name = request.POST.get('name')
+            roll_number = request.POST.get('roll')
         print(Name)
         print(roll_number)
         try:
@@ -39,7 +42,10 @@ def index(request):
                 from_='+18587790079',
                 to='+91' + str(phone_number)
             )
-
+            try:
+                student = Student.objects.get(roll=roll_number)
+            except Student.DoesNotExist:
+                student = Student.objects.create(roll=roll_number, name=Name)
             return render(request, 'index.html')
         except Test.DoesNotExist:
             return HttpResponse(f"No student found with roll number {roll_number}")
@@ -58,16 +64,18 @@ def verify_otp(request):
             # OTP is verified, do something
             roll_number = request.session.get('roll_number')
             Name = request.session.get('Name')
-            validation = request.session.get('validation')
             validation = True
-            
+            request.session['validation'] = validation
+            del request.session['otp']
             try:
                 student = Student.objects.get(roll=roll_number)
+                student.validation = validation
+                student.save()
             except Student.DoesNotExist:
-                student = Student.objects.create(roll=roll_number, name=Name, validation=validation)
-            request.session['validation'] = validation
+                return HttpResponse("Student not found.")
             return render(request, 'OutGoing.html')
         else:
+            del request.session['otp']
             return HttpResponse("Invalid OTP")
 
     return HttpResponse("Use the form to submit a POST request with the OTP.")
@@ -79,18 +87,30 @@ def OutGoing(request):
             student = Student.objects.get(roll=roll_number)
             indian_timezone = pytz.timezone('Asia/Kolkata')
             now = timezone.now().astimezone(indian_timezone)
-            if not student.StudentIn:
-                student.StudentIn = True
-                student.StudentOut = False
-                student.InTime = now.strftime("%d/%m/%Y %H:%M:%S")
-            else:
-                student.OutTime = now.strftime("%d/%m/%Y %H:%M:%S")
-                student.StudentOut = True
-                student.StudentIn = False
-                student.InTime = "Still out of campus"
+            student.OutTime = now.strftime("%A, %d %B %Y %H:%M:%S")
+            student.StudentOut = True
+            student.StudentIn = False
+            student.InTime = "Still out of campus"
             student.save()
-            return render(request, 'OutGoing.html', {'roll_number': roll_number})
+            return render(request, 'Incoming.html', {'roll_number': roll_number})
         except Student.DoesNotExist:
             return HttpResponse("Student not found.")
     return HttpResponse("Student not validated.")
 
+
+
+def Incoming(request):
+    if request.session.get('validation'):
+        roll_number = request.session.get('roll_number')
+        try:
+            student = Student.objects.get(roll=roll_number)
+            indian_timezone = pytz.timezone('Asia/Kolkata')
+            now = timezone.now().astimezone(indian_timezone)
+            student.StudentIn = True
+            student.StudentOut = False
+            student.InTime = now.strftime("%A, %d %B %Y %H:%M:%S")
+            student.save()
+            return redirect('/')
+        except Student.DoesNotExist:
+            return HttpResponse("Student not found.")
+    return HttpResponse("Student not validated.")
