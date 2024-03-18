@@ -6,10 +6,10 @@
     <title>Gate</title>
 </head>
 <body>
-    <h1>GATE 3</h1>
+    <h1>GATE 3 Incoming</h1>
     <form action="/Incoming" method="POST">
         {% csrf_token %}
-        <h1>Roll_number  = {{roll_number}}</h1>
+        <input type="text" name="roll" placeholder="APXXXXXXXXXXX">
         <button type="submit">Incoming</button>
     </form>
 </body>

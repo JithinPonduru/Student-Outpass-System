@@ -115,17 +115,21 @@
         class="logo"
       />
 
-      <form action="" method="post">
+      <form action="" method="POST">
         {% csrf_token %}
         <label>Name</label>
         <input type="text" name="name" placeholder="Name" />
         <label>Application No</label>
         <input type="text" name="roll" placeholder="APXXXXXXXXXXX" />
+        <label>UID</label>
+        <input type="number" name="uid" placeholder="UID" />
         <button type="submit">Submit</button>
       </form>
 
       <form action="/otp" method="POST">
         {% csrf_token %}
+        <label>Application No</label>
+        <input type="text" name="roll" placeholder="APXXXXXXXXXXX" />
         <label>Enter the OTP</label>
         <input type="number" name="otp" placeholder="OTP" />
         <button type="submit">Verify</button>
