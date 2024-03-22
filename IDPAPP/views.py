@@ -7,22 +7,26 @@ from IDPAPP import Twiliodetails
 from django.utils import timezone
 import pytz
 import json
+from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 
 indian_timezone = pytz.timezone('Asia/Kolkata')
 
 @csrf_exempt
 def index(request):
+    print(str(timezone.now().astimezone(indian_timezone) + timezone.timedelta(minutes=5)))
     if request.method == 'POST':
         try:
             # 1548100121    
             received_data = json.loads(request.body)
             Name = received_data.get('name')
             roll_number = received_data.get('roll')
+            roll_number = roll_number[:13]
             Uid = received_data.get('uid')
         except json.JSONDecodeError:
             Name = request.POST.get('name')
             roll_number = request.POST.get('roll')
+            roll_number = roll_number[:13]
             Uid = request.POST.get('uid')
         print(Name, roll_number, Uid)
         try:
@@ -45,10 +49,11 @@ def index(request):
                 student.otp = OTP
                 
             except Student.DoesNotExist:
-                student = Student.objects.create(roll=roll_number, name=Name, uid=Uid, otp=OTP)
+                student = Student.objects.create(roll=roll_number, name=Name, uid=Uid, otp=OTP,otp_expiry=timezone.now().astimezone(indian_timezone) + timezone.timedelta(minutes=5))
             student.validation = False
             student.InTime = ""
             student.OutTime = ""
+            student.otp_expiry = timezone.now().astimezone(indian_timezone) + timezone.timedelta(minutes=5) + timezone.timedelta(hours=5, minutes=30)
             student.save()
             return render(request, 'index.html')
         except Test.DoesNotExist:
@@ -62,14 +67,14 @@ def verify_otp(request):
         try:
             received_data = json.loads(request.body)
             roll_number = received_data.get('roll')
+            roll_number = roll_number[:13]
             otp_input = received_data.get('otp')
         except json.JSONDecodeError:
             roll_number = request.POST.get('roll')
+            roll_number = roll_number[:13]
             otp_input = request.POST.get('otp')
-
         try:
             student = Student.objects.get(roll=roll_number)
-            
             if student.otp_expiry < timezone.now():
                 return HttpResponse('OTP expired. Please request a new OTP.')
             
@@ -78,7 +83,7 @@ def verify_otp(request):
                 student.validation = True
                 student.save()
                 print(student.validation)
-                return render(request, 'OutGoing.html')      
+                return redirect('/' ,{'verification' : True})      
             
             elif not student.validation:
                 return HttpResponse(f'Student is not Verified with Roll_number : {student.roll} and Name : {student.name} Please request an OTP.')
@@ -88,15 +93,19 @@ def verify_otp(request):
         
         except Student.DoesNotExist:
             return HttpResponse("Student not found.")
-    return HttpResponse("Use the form to submit a POST request with the OTP.")
+    else:
+        return HttpResponse("Invalid request method.")
+
 
 def OutGoing(request):
     if request.method == 'POST':
         try:
             received_data = json.loads(request.body)
             roll_number = received_data.get('roll')
+            roll_number = roll_number[:13]
         except json.JSONDecodeError:
             roll_number = request.POST.get('roll')
+            roll_number = roll_number[:13]
 
         try:
             print(roll_number)
@@ -111,23 +120,31 @@ def OutGoing(request):
             return render(request, 'Incoming.html', {'roll_number': roll_number})
         except Student.DoesNotExist:
             return HttpResponse("Student not validated or not found.")
+    else:
+        return render(request, 'OutGoing.html')
 
 def Incoming(request):
     if request.method == 'POST':
         try:
             received_data = json.loads(request.body)
             roll_number = received_data.get('roll')
+            roll_number = roll_number[:13]
         except json.JSONDecodeError:
             roll_number = request.POST.get('roll')
+            roll_number = roll_number[:13]
 
         try:
+            print(roll_number)
             student = Student.objects.get(roll=roll_number, validation=True)
+            print('student validated')
             now = timezone.now().astimezone(indian_timezone)
-            student.StudentIn = True
-            student.StudentOut = False
             student.validation = False
+            student.StudentOut = False
+            student.StudentIn = True
             student.InTime = now.strftime("%A, %d %B %Y %H:%M:%S")
             student.save()
-            return redirect('/')
+            return render(request, 'Incoming.html', {'roll_number': roll_number})
         except Student.DoesNotExist:
-            return HttpResponse("Student not validated or not found.")
+            return HttpResponse("It was found that the student was suspicious of leaving without permission.")
+    else:
+        return render(request, 'Incoming.html')

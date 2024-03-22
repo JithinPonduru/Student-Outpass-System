@@ -94,7 +94,7 @@
       }
 
       /* Firefox */
-      input[type="number" ] {
+      input[type="number"] {
         -moz-appearance: textfield;
       }
     </style>
@@ -134,6 +134,11 @@
         <input type="number" name="otp" placeholder="OTP" />
         <button type="submit">Verify</button>
       </form>
+      <div>
+        {% if verification %}
+        <p>OTP Verified</p>
+        {% endif %}
+      </div>
     </div>
   </body>
 </html>

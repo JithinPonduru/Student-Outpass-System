@@ -14,8 +14,8 @@ class Student(models.Model):
     StudentIn = models.BooleanField(default=True)
     OutTime = models.CharField(max_length=200)
     InTime = models.CharField(max_length=200)
-    otp_expiry = timezone.now().astimezone(indian_timezone) + timezone.timedelta(minutes=5)
-
+    otp_expiry = models.DateTimeField()
+   
     def __str__(self):
         return self.roll
 
