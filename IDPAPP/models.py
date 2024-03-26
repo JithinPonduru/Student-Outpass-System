@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 import pytz
 
-indian_timezone = pytz.timezone('Asia/Kolkata')
+indian_timezone = timezone.get_fixed_timezone(330) 
 
 class Student(models.Model):
     roll = models.CharField(max_length=200, primary_key=True)
@@ -31,10 +31,8 @@ class Test(models.Model):
 
 class OutRecord(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='out_records')
-    out_time = models.DateTimeField()
-    in_time = models.DateTimeField(null=True, blank=True)
-    now = timezone.now().astimezone(indian_timezone)
-    TodayDate = now.strftime("%A, %d %B %Y %H:%M:%S")
+    OutDate = models.CharField(max_length=200)
+    InDate = models.CharField(max_length=200)
 
     def __str__(self):
         return f"{self.student.roll}"

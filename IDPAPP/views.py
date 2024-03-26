@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from IDPAPP.models import Student, Test
+from IDPAPP.models import OutRecord, Student, Test
 import random
 from twilio.rest import Client
 from IDPAPP import Twiliodetails
@@ -10,7 +10,9 @@ import json
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 
-indian_timezone = pytz.timezone('Asia/Kolkata')
+# OutRecord , Uid Update or Adding , 
+
+indian_timezone = timezone.get_fixed_timezone(330) 
 
 @csrf_exempt
 def index(request):
@@ -112,12 +114,15 @@ def OutGoing(request):
             student = Student.objects.get(roll=roll_number, validation=True)
             print('student validated')
             now = timezone.now().astimezone(indian_timezone)
-            student.OutTime = now.strftime("%A, %d %B %Y %H:%M:%S")
+            timevar = now.strftime("%A, %d %B %Y %H:%M:%S")
+            student.OutTime = timevar
             student.StudentOut = True
             student.StudentIn = False
             student.InTime = "Still out of campus"
             student.save()
-            return render(request, 'Incoming.html', {'roll_number': roll_number})
+            dataitem = OutRecord.objects.create(student=student, OutDate=timevar)
+            dataitem.save()
+            return render(request, 'OutGoing.html', {'roll_number': roll_number})
         except Student.DoesNotExist:
             return HttpResponse("Student not validated or not found.")
     else:
@@ -134,17 +139,23 @@ def Incoming(request):
             roll_number = roll_number[:13]
 
         try:
-            print(roll_number)
             student = Student.objects.get(roll=roll_number, validation=True)
-            print('student validated')
             now = timezone.now().astimezone(indian_timezone)
+            timevar = now.strftime("%A, %d %B %Y %H:%M:%S")
+            
             student.validation = False
             student.StudentOut = False
             student.StudentIn = True
-            student.InTime = now.strftime("%A, %d %B %Y %H:%M:%S")
+            student.InTime = timevar
             student.save()
+            try:
+                dataitem = OutRecord.objects.get(student=student)
+                dataitem.InDate = timevar
+                dataitem.save()
+            except OutRecord.DoesNotExist:
+                return HttpResponse ("OutRecord not found.")
             return render(request, 'Incoming.html', {'roll_number': roll_number})
         except Student.DoesNotExist:
-            return HttpResponse("It was found that the student was suspicious of leaving without permission.")
+            return HttpResponse("Student not validated or not found.")
     else:
         return render(request, 'Incoming.html')

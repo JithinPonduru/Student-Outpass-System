@@ -4,13 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+            margin: 2%;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>GATE 3 Incoming</h1>
     <form action="/InComing" method="POST">
         {% csrf_token %}
-        <input type="text" name="roll" placeholder="APXXXXXXXXXXX">
-        <button type="submit">Incoming</button> 
+        <div class="mb-3">
+            <label for="roll" class="form-label">Roll Number</label>
+            <input type="text" class="form-control" id="roll" name="roll" placeholder="APXXXXXXXXXXX" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Incoming</button>
     </form>
 </body>
 </html>
