@@ -25,5 +25,6 @@ urlpatterns = [
     path('',views.index,name='index'),
     path('otp',views.verify_otp,name='OTP'),
     path('OutGoing',views.OutGoing,name='OutGoing'),
-    path('InComing',views.Incoming,name='Incoming')
+    path('InComing',views.Incoming,name='Incoming'),
+    path('StudentRecord',views.functiontemp,name='studentrecord')
 ]

@@ -106,6 +106,7 @@
     <nav>
       <a href="OutGoing">OutGoing</a>
       <a href="InComing">InComing</a>
+      <a href = 'StudentRecord'>Student Records</a>
     </nav>
     <div class="container">
       <!-- Add your college logo image here -->
@@ -115,7 +116,7 @@
         class="logo"
       />
 
-      <form action="" method="POST">
+      <form action="/" method="POST">
         {% csrf_token %}
         <label>Name</label>
         <input type="text" name="name" placeholder="Name" />
@@ -136,9 +137,11 @@
       </form>
       <div>
         {% if verification %}
-        <p>OTP Verified</p>
+        <p style="color: green;">OTP Verified</p>
         {% endif %}
       </div>
+
+
     </div>
   </body>
 </html>

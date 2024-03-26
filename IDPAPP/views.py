@@ -5,7 +5,6 @@ import random
 from twilio.rest import Client
 from IDPAPP import Twiliodetails
 from django.utils import timezone
-import pytz
 import json
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
@@ -16,10 +15,8 @@ indian_timezone = timezone.get_fixed_timezone(330)
 
 @csrf_exempt
 def index(request):
-    print(str(timezone.now().astimezone(indian_timezone) + timezone.timedelta(minutes=5)))
     if request.method == 'POST':
-        try:
-            # 1548100121    
+        try:  
             received_data = json.loads(request.body)
             Name = received_data.get('name')
             roll_number = received_data.get('roll')
@@ -36,14 +33,14 @@ def index(request):
             phone_number = student.phone
 
             OTP = random.randint(100000, 999999)
-            # account_sid = Twiliodetails.account_sid
-            # auth_token = Twiliodetails.auth_token
-            # client = Client(account_sid, auth_token)
-            # message = client.messages.create(
-            #     body=f'\nHello, {OTP} is your OTP. Your child is leaving the camp with admission number {roll_number}. If you consent to your child leaving the campus, please share this. Good for a duration of five minutes.',
-            #     from_='+18587790079',
-            #     to='+91' + str(phone_number)
-            # )
+            account_sid = Twiliodetails.account_sid
+            auth_token = Twiliodetails.auth_token
+            client = Client(account_sid, auth_token)
+            message = client.messages.create(
+                body=f'\nHello, {OTP} is your OTP. Your child is leaving the camp with admission number {roll_number}. If you consent to your child leaving the campus, please share this. Good for a duration of five minutes.',
+                from_='+18587790079',
+                to='+91' + str(phone_number)
+            )
             print(OTP)
 
             try:
@@ -98,7 +95,7 @@ def verify_otp(request):
     else:
         return HttpResponse("Invalid request method.")
 
-
+@csrf_exempt
 def OutGoing(request):
     if request.method == 'POST':
         try:
@@ -127,7 +124,8 @@ def OutGoing(request):
             return HttpResponse("Student not validated or not found.")
     else:
         return render(request, 'OutGoing.html')
-
+    
+@csrf_exempt
 def Incoming(request):
     if request.method == 'POST':
         try:
@@ -149,7 +147,7 @@ def Incoming(request):
             student.InTime = timevar
             student.save()
             try:
-                dataitem = OutRecord.objects.get(student=student)
+                dataitem = OutRecord.objects.get(student=student, InDate="")
                 dataitem.InDate = timevar
                 dataitem.save()
             except OutRecord.DoesNotExist:
@@ -159,3 +157,25 @@ def Incoming(request):
             return HttpResponse("Student not validated or not found.")
     else:
         return render(request, 'Incoming.html')
+
+@csrf_exempt
+def functiontemp(request):
+    if request.method == 'POST':
+        try:
+            received_data = json.loads(request.body)
+            roll_number = received_data.get('roll')
+        except json.JSONDecodeError:
+            roll_number = request.POST.get('roll')
+
+        roll_number = roll_number[:13]  # Truncate to 13 characters if longer
+
+        try:
+            student = Student.objects.get(roll=roll_number)
+            out_records = OutRecord.objects.filter(student=student)
+            for record in out_records:
+                print(record.OutDate, record.InDate)
+            return render(request, 'StudentRecords.html', {'students': out_records,'studentdetails' : student})
+        except Student.DoesNotExist:
+            return HttpResponse("Student not found.")
+    else:
+        return render(request, 'StudentRecords.html')
