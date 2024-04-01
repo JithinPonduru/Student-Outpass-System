@@ -26,5 +26,9 @@ urlpatterns = [
     path('otp',views.verify_otp,name='OTP'),
     path('OutGoing',views.OutGoing,name='OutGoing'),
     path('InComing',views.Incoming,name='Incoming'),
-    path('StudentRecord',views.functiontemp,name='studentrecord')
+    path('StudentRecord',views.functiontemp,name='studentrecord'),
+    path('resendotp',views.ResendOTP,name='resendotp'),
+    path('viewotp',views.ViewOTP,name='viewotp'),
+    path('ListofApplicants', views.ListofApplicants, name='ListofApplicants'),
+    
 ]

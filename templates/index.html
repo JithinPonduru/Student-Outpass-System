@@ -97,6 +97,11 @@
       input[type="number"] {
         -moz-appearance: textfield;
       }
+
+      label,
+      .butsub {
+        margin-top: 1.5%;
+      }
     </style>
   </head>
   <body>
@@ -106,7 +111,8 @@
     <nav>
       <a href="OutGoing">OutGoing</a>
       <a href="InComing">InComing</a>
-      <a href = 'StudentRecord'>Student Records</a>
+      <a href="StudentRecord">Student Records</a>
+      <a href="ListofApplicants">List Of Application</a>
     </nav>
     <div class="container">
       <!-- Add your college logo image here -->
@@ -116,32 +122,154 @@
         class="logo"
       />
 
+      <h1>Application</h1>
+
       <form action="/" method="POST">
         {% csrf_token %}
         <label>Name</label>
         <input type="text" name="name" placeholder="Name" />
+
         <label>Application No</label>
         <input type="text" name="roll" placeholder="APXXXXXXXXXXX" />
+
         <label>UID</label>
         <input type="number" name="uid" placeholder="UID" />
-        <button type="submit">Submit</button>
+
+        <label>Home Outing</label>
+        <input type="radio" name="Home" value="True" id="homeYes" /> Yes
+        <input type="radio" name="Home" value="False" id="homeNo" checked /> No
+
+        <label>General Outing</label>
+        <input
+          type="radio"
+          name="General"
+          value="True"
+          id="generalYes"
+          checked
+        />
+        Yes
+        <input type="radio" name="General" value="False" id="generalNo" /> No
+
+        <br />
+
+        <div class="butsub">
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+      <h1>Verifiction</h1>
+      <form id="mainForm" action="/otp" method="POST">
+        {% csrf_token %} 
+
+        <label>Application No</label>
+        <input
+          id="rollInput"
+          type="text"
+          name="roll"
+          placeholder="APXXXXXXXXXXX"
+        />
+        <label>Enter the OTP</label>
+        <input id="otpInput" type="number" name="otp" placeholder="OTP" />
+        <button id="mainbutton" type="submit">Verify</button>
       </form>
 
-      <form action="/otp" method="POST">
-        {% csrf_token %}
-        <label>Application No</label>
-        <input type="text" name="roll" placeholder="APXXXXXXXXXXX" />
-        <label>Enter the OTP</label>
-        <input type="number" name="otp" placeholder="OTP" />
-        <button type="submit">Verify</button>
-      </form>
+      <button id="resendButton">Resend OTP</button>
+      <button id="viewOTPButton">View OTP</button>
+
       <div>
-        {% if verification %}
-        <p style="color: green;">OTP Verified</p>
+        {% if resendstatus %}
+        <p>{{resendstatus}}</p>
         {% endif %}
       </div>
 
-
+      <div>
+        {% if temp %}
+        <p>Roll Number: {{ temp.roll_number }}</p>
+        <p>OTP: {{ temp.viewotp }}</p>
+        {% endif %}
     </div>
+    
+
+      <div>
+        {% if verification %}
+        <p style="color: green">OTP Verified</p>
+        {% endif %}
+      </div>
+    </div>
+
+    
+
+    <script>
+      document
+        .getElementById("resendButton")
+        .addEventListener("click", function () {
+          // Get the roll and OTP entered in the first form
+          var roll = document.getElementById("rollInput").value;
+          var otp = document.getElementById("otpInput").value;
+
+          // Create a new form
+          var form = document.createElement("form");
+          form.setAttribute("method", "POST");
+          form.setAttribute("action", "/resendotp");
+
+          // Create input fields for roll and otp
+          var rollInput = document.createElement("input");
+          rollInput.setAttribute("type", "hidden");
+          rollInput.setAttribute("name", "roll");
+          rollInput.setAttribute("value", roll);
+          form.appendChild(rollInput);
+
+          var otpInput = document.createElement("input");
+          otpInput.setAttribute("type", "hidden");
+          otpInput.setAttribute("name", "otp");
+          otpInput.setAttribute("value", otp);
+          form.appendChild(otpInput);
+
+          // Submit the form
+          document.body.appendChild(form);
+          form.submit();
+        });
+
+      document
+        .getElementById("viewOTPButton")
+        .addEventListener("click", function () {
+          // Get the roll entered in the first form
+          var roll = document.getElementById("rollInput").value;
+
+          // Create a new form
+          var form = document.createElement("form");
+          form.setAttribute("method", "POST");
+          form.setAttribute("action", "/viewotp");
+
+          // Create input fields for roll
+          var rollInput = document.createElement("input");
+          rollInput.setAttribute("type", "hidden");
+          rollInput.setAttribute("name", "roll");
+          rollInput.setAttribute("value", roll);
+          form.appendChild(rollInput);
+
+          // Submit the form
+          document.body.appendChild(form);
+          form.submit();
+        });
+    </script>
+
+    <script>
+      const homeYes = document.getElementById("homeYes");
+      const homeNo = document.getElementById("homeNo");
+      const generalYes = document.getElementById("generalYes");
+      const generalNo = document.getElementById("generalNo");
+
+      homeYes.addEventListener("change", function () {
+        if (this.checked) {
+          generalNo.checked = true;
+        }
+      });
+
+      generalYes.addEventListener("change", function () {
+        if (this.checked) {
+          homeNo.checked = true;
+        }
+      });
+    </script>
   </body>
 </html>

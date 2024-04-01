@@ -1,3 +1,9 @@
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,18 +64,23 @@
             <tr>
                 <th>Roll Number</th>
                 <th>Student Name</th>
+                <th>Type</th>
                 <th>OutDate</th>
                 <th>InDate</th>
+
             </tr>
         </thead>
         <tbody>
-            {% if students %}
-            <script>console.log(students) </script>
-            {% endif %}
+
             {% for student in students %}
             <tr>
                 <td>{{ studentdetails.roll }}</td>
                 <td>{{ studentdetails.name }}</td>
+                {% if student.HomeOuting == True %}
+                <td>Home</td>
+                {% else %}
+                <td>General</td>
+                {% endif %}
                 <td>{{ student.OutDate }}</td>
                 <td>{{ student.InDate }}</td>
             </tr>
