@@ -36,15 +36,14 @@ def index(request):
             phone_number = Test.objects.get(roll=roll_number).phone
 
             OTP = random.randint(100000, 999999)
-            # account_sid = Twiliodetails.account_sid
-            # auth_token = Twiliodetails.auth_token
-            # client = Client(account_sid, auth_token)
-            # message = client.messages.create(
-            #     body=f'\nHello, {OTP} is your OTP. Your child is leaving the camp with admission number {roll_number} Name {student.name}. If you consent to your child leaving the campus, please share this. Good for a duration of five minutes.',
-            #     from_='+18587790079',
-            #     to='+91' + str(phone_number)
-            # )
-            print(OTP)
+            account_sid = Twiliodetails.account_sid
+            auth_token = Twiliodetails.auth_token
+            client = Client(account_sid, auth_token)
+            message = client.messages.create(
+                body=f'\nHello, {OTP} is your OTP. Your child is leaving the camp with admission number {roll_number} Name {student.name}. If you consent to your child leaving the campus, please share this. Good for a duration of five minutes.',
+                from_='+18587790079',
+                to='+91' + str(phone_number)
+            )
             try:
                 student = Student.objects.get(roll=roll_number)
                 student.otp = OTP
@@ -122,11 +121,11 @@ def OutGoing(request):
             account_sid = Twiliodetails.account_sid
             auth_token = Twiliodetails.auth_token
             client = Client(account_sid, auth_token)
-            # message = client.messages.create(
-            #     body=f'\nYour child with admission number {roll_number} has left the campus. If you have not consented to this, please contact the authorities.',
-            #     from_='+18587790079',
-            #     to='+91' + str(phone_number)
-            # )
+            message = client.messages.create(
+                body=f'\nYour child with admission number {roll_number} has left the campus. If you have not consented to this, please contact the authorities.',
+                from_='+18587790079',
+                to='+91' + str(phone_number)
+            )
             student.save()
             dataitem = OutRecord.objects.create(student=student, OutDate=timevar , GeneralOuting=student.GeneralOuting, HomeOuting=student.HomeOuting)
             dataitem.save()
@@ -154,7 +153,6 @@ def Incoming(request):
             timevar = now.strftime("%A, %d %B %Y %H:%M:%S")
             if hrs >= 21:
                 student.lateentryflag = True
-                print(student.lateentryflag)
             student.validation = False
             student.StudentOut = False
             student.StudentIn = True
@@ -163,11 +161,11 @@ def Incoming(request):
             auth_token = Twiliodetails.auth_token
             client = Client(account_sid, auth_token)
             phone_number = Test.objects.get(roll=roll_number).phone
-            # message = client.messages.create(
-            #     body=f'\nYour child with admission number {roll_number} has returned to the campus. If you have not consented to this, please contact the authorities.',
-            #     from_='+18587790079',
-            #     to='+91' + str(phone_number)
-            # )
+            message = client.messages.create(
+                body=f'\nYour child with admission number {roll_number} has returned to the campus. If you have not consented to this, please contact the authorities.',
+                from_='+18587790079',
+                to='+91' + str(phone_number)
+            )
 
 
             try:
@@ -225,11 +223,11 @@ def ResendOTP(request):
                 account_sid = Twiliodetails.account_sid
                 auth_token = Twiliodetails.auth_token
                 client = Client(account_sid, auth_token)
-                # message = client.messages.create(
-                #     body=f'\nHello, {OTP} is your OTP. Your child is leaving the camp with admission number {roll_number} Name {student.name}. If you consent to your child leaving the campus, please share this. Good for a duration of five minutes.',
-                #     from_='+18587790079',
-                #     to='+91' + str(phone_number)
-                # )
+                message = client.messages.create(
+                    body=f'\nHello, {OTP} is your OTP. Your child is leaving the camp with admission number {roll_number} Name {student.name}. If you consent to your child leaving the campus, please share this. Good for a duration of five minutes.',
+                    from_='+18587790079',
+                    to='+91' + str(phone_number)
+                )
                 return render(request, 'index.html', {'resendstatus':"OTP sent successfully."})
             else:
                 return render(request, 'index.html', {'resendstatus':"OTP Not Expired"})
