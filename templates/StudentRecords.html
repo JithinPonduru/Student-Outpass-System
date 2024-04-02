@@ -65,6 +65,7 @@
                 <th>Roll Number</th>
                 <th>Student Name</th>
                 <th>Type</th>
+                <th>Late Entery</th>
                 <th>OutDate</th>
                 <th>InDate</th>
 
@@ -80,6 +81,11 @@
                 <td>Home</td>
                 {% else %}
                 <td>General</td>
+                {% endif %}
+                {% if student.lateenteryflag == True %}
+                <td>Yes</td>
+                {% else %}
+                <td>No</td>
                 {% endif %}
                 <td>{{ student.OutDate }}</td>
                 <td>{{ student.InDate }}</td>

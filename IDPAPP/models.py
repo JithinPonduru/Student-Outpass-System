@@ -18,6 +18,7 @@ class Student(models.Model):
     InTime = models.CharField(max_length=200)
     otp_expiry = models.DateTimeField()
     showinnotverified = models.BooleanField(default=True)
+    lateentryflag = models.BooleanField(default=False)
    
     def __str__(self):
         return self.roll
@@ -38,6 +39,6 @@ class OutRecord(models.Model):
     InDate = models.CharField(max_length=200)
     HomeOuting = models.BooleanField(default=False)
     GeneralOuting = models.BooleanField(default=True)
-    
+    lateenteryflag = models.BooleanField(default=False)
     def __str__(self):
         return f"{self.student.roll}"

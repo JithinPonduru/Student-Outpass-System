@@ -127,13 +127,13 @@
       <form action="/" method="POST">
         {% csrf_token %}
         <label>Name</label>
-        <input type="text" name="name" placeholder="Name" />
+        <input type="text" name="name" placeholder="Name"  required/>
 
         <label>Application No</label>
-        <input type="text" name="roll" placeholder="APXXXXXXXXXXX" />
+        <input type="text" name="roll" placeholder="APXXXXXXXXXXX" required/>
 
         <label>UID</label>
-        <input type="number" name="uid" placeholder="UID" />
+        <input type="number" name="uid" placeholder="UID" required/>
 
         <label>Home Outing</label>
         <input type="radio" name="Home" value="True" id="homeYes" /> Yes
@@ -158,7 +158,7 @@
       </form>
       <h1>Verifiction</h1>
       <form id="mainForm" action="/otp" method="POST">
-        {% csrf_token %} 
+        {% csrf_token %}
 
         <label>Application No</label>
         <input
@@ -166,9 +166,10 @@
           type="text"
           name="roll"
           placeholder="APXXXXXXXXXXX"
+          required
         />
         <label>Enter the OTP</label>
-        <input id="otpInput" type="number" name="otp" placeholder="OTP" />
+        <input id="otpInput" type="number" name="otp" placeholder="OTP" required/>
         <button id="mainbutton" type="submit">Verify</button>
       </form>
 
@@ -186,17 +187,21 @@
         <p>Roll Number: {{ temp.roll_number }}</p>
         <p>OTP: {{ temp.viewotp }}</p>
         {% endif %}
-    </div>
-    
+      </div>
 
       <div>
         {% if verification %}
-        <p style="color: green">OTP Verified</p>
+          {% if verification == "OTP Verified" %}
+              <p style="color: green">{{verification}}</p>
+          {% else %}
+              <p style="color: red">{{verification}}</p>
+          {% endif %}
         {% endif %}
-      </div>
-    </div>
-
     
+      </div>
+
+
+    </div>
 
     <script>
       document

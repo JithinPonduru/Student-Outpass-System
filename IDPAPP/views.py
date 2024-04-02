@@ -9,7 +9,6 @@ import json
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 
-# OutRecord , Uid Update or Adding , 
 
 indian_timezone = timezone.get_fixed_timezone(330) 
 
@@ -87,13 +86,13 @@ def verify_otp(request):
                 student.validation = True
                 student.showinnotverified = False
                 student.save()
-                return render(request,'index.html' ,{'verification' : True})      
+                return render(request,'index.html' ,{'verification' : 'OTP Verified'})      
             
             elif not student.validation:
-                return HttpResponse(f'Student is not Verified with Roll_number : {student.roll} and Name : {student.name} Please request an OTP.')
+                return render(request,'index.html' ,{'verification' : 'OTP Not Verified. Incorrect OTP'}) 
             
             else:
-                return HttpResponse("Invalid OTP. Please try again.")
+                return render(request,'index.html' ,{'verification' : 'Invalid OTP. Please try again.'}) 
         
         except Student.DoesNotExist:
             return HttpResponse("Student not found.")
@@ -151,8 +150,11 @@ def Incoming(request):
         try:
             student = Student.objects.get(roll=roll_number, validation=True,StudentOut=True)
             now = timezone.now().astimezone(indian_timezone)
+            hrs = now.hour
             timevar = now.strftime("%A, %d %B %Y %H:%M:%S")
-            
+            if hrs >= 21:
+                student.lateentryflag = True
+                print(student.lateentryflag)
             student.validation = False
             student.StudentOut = False
             student.StudentIn = True
@@ -171,6 +173,7 @@ def Incoming(request):
             try:
                 dataitem = OutRecord.objects.get(student=student, InDate="")
                 dataitem.InDate = timevar
+                dataitem.lateenteryflag = student.lateentryflag
                 dataitem.save()
             except OutRecord.DoesNotExist:
                 return HttpResponse ("OutRecord not found.")
@@ -281,5 +284,5 @@ def ListofApplicants(request):
         except Student.DoesNotExist:
             return HttpResponse("Student not found.")
     else:
-        Notvalidatedstudents = Student.objects.filter(validation=False)
+        Notvalidatedstudents = Student.objects.filter(validation=False,showinnotverified=True)
         return render(request, 'ListofApplicants.html', {'Notvalidatedstudents': Notvalidatedstudents})
