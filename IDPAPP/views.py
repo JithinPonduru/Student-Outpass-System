@@ -22,8 +22,8 @@ def index(request):
             roll_number = received_data.get('roll')
             roll_number = roll_number[:13]
             Uid = received_data.get('uid')
-            General = received_data.get('General')
-            Home = received_data.get('Home')
+            General = True
+            Home = False
         except json.JSONDecodeError:
             Name = request.POST.get('name')
             roll_number = request.POST.get('roll')
@@ -34,14 +34,16 @@ def index(request):
         try:
             student = Test.objects.get(roll=roll_number)
             phone_number = Test.objects.get(roll=roll_number).phone
-
+            print(Name)
+            print(roll_number)
             OTP = random.randint(100000, 999999)
+            print(OTP)  
             account_sid = Twiliodetails.account_sid
             auth_token = Twiliodetails.auth_token
             client = Client(account_sid, auth_token)
             message = client.messages.create(
-                body=f'\nHello, {OTP} is your OTP. Your child is leaving the camp with admission number {roll_number} Name {student.name}. If you consent to your child leaving the campus, please share this. Good for a duration of five minutes.',
-                from_='+18587790079',
+                body=f'\nHello, {OTP} is your OTP. Your child is leaving the campus with admission number {roll_number} Name {student.name}. If you consent to your child leaving the campus, please share this. Good for a duration of five minutes.',
+                from_='+13203443435',
                 to='+91' + str(phone_number)
             )
             try:
@@ -123,7 +125,7 @@ def OutGoing(request):
             client = Client(account_sid, auth_token)
             message = client.messages.create(
                 body=f'\nYour child with admission number {roll_number} has left the campus. If you have not consented to this, please contact the authorities.',
-                from_='+18587790079',
+                from_='+13203443435',
                 to='+91' + str(phone_number)
             )
             student.save()
@@ -163,7 +165,7 @@ def Incoming(request):
             phone_number = Test.objects.get(roll=roll_number).phone
             message = client.messages.create(
                 body=f'\nYour child with admission number {roll_number} has returned to the campus. If you have not consented to this, please contact the authorities.',
-                from_='+18587790079',
+                from_='+13203443435',
                 to='+91' + str(phone_number)
             )
 
@@ -224,8 +226,8 @@ def ResendOTP(request):
                 auth_token = Twiliodetails.auth_token
                 client = Client(account_sid, auth_token)
                 message = client.messages.create(
-                    body=f'\nHello, {OTP} is your OTP. Your child is leaving the camp with admission number {roll_number} Name {student.name}. If you consent to your child leaving the campus, please share this. Good for a duration of five minutes.',
-                    from_='+18587790079',
+                    body=f'\nHello, {OTP} is your OTP. Your child is leaving the campus with admission number {roll_number} Name {student.name}. If you consent to your child leaving the campus, please share this. Good for a duration of five minutes.',
+                    from_='+13203443435',
                     to='+91' + str(phone_number)
                 )
                 return render(request, 'index.html', {'resendstatus':"OTP sent successfully."})

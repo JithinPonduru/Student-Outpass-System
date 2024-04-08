@@ -16,7 +16,7 @@ class Student(models.Model):
     GeneralOuting = models.BooleanField(default=True)
     OutTime = models.CharField(max_length=200)
     InTime = models.CharField(max_length=200)
-    otp_expiry = models.DateTimeField()
+    otp_expiry = models.DateTimeField() #Y5TT2HDMCVAVYXB68B2ALF6V
     showinnotverified = models.BooleanField(default=True)
     lateentryflag = models.BooleanField(default=False)
    
