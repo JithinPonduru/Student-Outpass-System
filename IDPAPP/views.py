@@ -1,3 +1,4 @@
+# add that the time capture 
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from IDPAPP.models import OutRecord, Student, Test
@@ -34,10 +35,10 @@ def index(request):
         try:
             student = Test.objects.get(roll=roll_number)
             phone_number = Test.objects.get(roll=roll_number).phone
-            print(Name)
-            print(roll_number)
+            # print(Name)
+            # print(roll_number)
             OTP = random.randint(100000, 999999)
-            print(OTP)  
+            # print(OTP)  
             account_sid = Twiliodetails.account_sid
             auth_token = Twiliodetails.auth_token
             client = Client(account_sid, auth_token)
@@ -51,6 +52,7 @@ def index(request):
                 student.otp = OTP
                 student.GeneralOuting = General
                 student.HomeOuting = Home
+                student.showinnotverified = True
             except Student.DoesNotExist:
                 student = Student.objects.create(roll=roll_number, name=Name, uid=Uid, otp=OTP,otp_expiry=timezone.now().astimezone(indian_timezone) + timezone.timedelta(minutes=5))
             student.validation = False
@@ -278,6 +280,7 @@ def ListofApplicants(request):
             roll_number = received_data.get('roll')
         except json.JSONDecodeError:
             roll_number = request.POST.get('roll')
+        roll_number = roll_number[:13]
         try:
             Notvalidatedstudents = Student.objects.filter(roll=roll_number,showinnotverified=True)
             return render(request, 'ListofApplicants.html', {'Notvalidatedstudents': Notvalidatedstudents})

@@ -133,7 +133,7 @@
         <input type="text" name="roll" placeholder="APXXXXXXXXXXX" required/>
 
         <label>UID</label>
-        <input type="number" name="uid" placeholder="UID" required/>
+        <input type="number" name="uid" placeholder="UID" />
 
         <label>Home Outing</label>
         <input type="radio" name="Home" value="True" id="homeYes" /> Yes
@@ -156,7 +156,7 @@
           <button type="submit">Submit</button>
         </div>
       </form>
-      <h1>Verifiction</h1>
+      <h1>Verification</h1>
       <form id="mainForm" action="/otp" method="POST">
         {% csrf_token %}
 
